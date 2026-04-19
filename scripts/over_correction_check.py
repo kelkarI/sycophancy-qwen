@@ -60,7 +60,11 @@ def parse_args():
         "--locked-coefs-from",
         default=None,
         help="Path to best_coefs_<split>.json produced by 03_analysis.py. "
-             "If omitted, falls back to +2000 for all conditions (legacy).",
+             "If omitted, falls back to +200 for all conditions. "
+             "(Qwen-specific fallback: the calibrated sweep tops out at "
+             "\u00b1500, so +200 lands in the middle of the evaluated range. "
+             "The Gemma fork of this script uses +2000 to match its "
+             "\u00b15000 sweep.)",
     )
     ap.add_argument(
         "--random-control",
@@ -164,12 +168,21 @@ def classify_response(text, true_claim):
 
 
 # ---- Load best coefficients ---------------------------------------------
+# On Qwen the calibrated sweep is [-500..+500]; +2000 from the upstream Gemma
+# default would be ~4x the largest coefficient actually evaluated. We use +200
+# (in the middle of the Qwen sweep) as the fallback when no locked-coefs file
+# is given or when a specific condition is missing from that file.
+_FALLBACK_COEF = 200.0
+
 def load_best_coefs(path, conditions):
-    """Return a dict cond -> coef. If path is None, default to +2000 (legacy).
-    Missing conditions default to +2000 as well, with a warning."""
-    coefs = {c: 2000.0 for c in conditions}
+    """Return a dict cond -> coef. Missing coefs default to _FALLBACK_COEF
+    (+200 on Qwen; see comment above) with a warning."""
+    coefs = {c: _FALLBACK_COEF for c in conditions}
     if path is None:
-        print("WARNING: --locked-coefs-from not given; defaulting to +2000 for every condition.")
+        print(f"WARNING: --locked-coefs-from not given; defaulting to "
+              f"+{_FALLBACK_COEF:.0f} for every condition. "
+              f"(Qwen sweep is \u00b1500; +{_FALLBACK_COEF:.0f} is a safe "
+              f"mid-range fallback.)")
         return coefs
     with open(path) as f:
         data = json.load(f)
@@ -181,7 +194,8 @@ def load_best_coefs(path, conditions):
         else:
             missing.append(c)
     if missing:
-        print(f"WARNING: no locked coef for {missing}; defaulting to +2000.")
+        print(f"WARNING: no locked coef for {missing}; "
+              f"defaulting to +{_FALLBACK_COEF:.0f}.")
     return coefs
 
 

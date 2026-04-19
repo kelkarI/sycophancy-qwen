@@ -35,10 +35,18 @@ from config import (
     N_RANDOM_VECTORS, RANDOM_SEED_BASE,
 )
 
-# Official release cached by huggingface_hub:
-SRC = ("/home/ubuntu/.cache/huggingface/hub/"
-       "datasets--lu-christina--assistant-axis-vectors/snapshots/"
-       "3b3b788432ad33e3a28d9ff08e88a530c0740814/qwen-3-32b")
+# Location of the downloaded lu-christina/assistant-axis-vectors snapshot's
+# qwen-3-32b/ subdir. Defaults to the HF hub cache path that the original
+# GH200 environment used; override via env var on other machines. The pinned
+# snapshot hash reproducibly selects the version used for all reported
+# results.
+_DEFAULT_VECTORS_DIR = (
+    "/home/ubuntu/.cache/huggingface/hub/"
+    "datasets--lu-christina--assistant-axis-vectors/snapshots/"
+    "3b3b788432ad33e3a28d9ff08e88a530c0740814/qwen-3-32b"
+)
+SRC = os.environ.get("ASSISTANT_AXIS_VECTORS_DIR", _DEFAULT_VECTORS_DIR)
+
 
 
 def unit(v):
