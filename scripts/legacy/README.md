@@ -1,7 +1,7 @@
 # Legacy scripts (unused)
 
 These three files were inherited from the upstream Gemma pipeline
-(`kelkarI/sycophancy-final`) when this repo was forked for the Qwen 3 32B
+(`kelkarI/sycophancy-gemma`) when this repo was forked for the Qwen 3 32B
 replication. They still reference `gemma-2-27b/` paths in
 `lu-christina/assistant-axis-vectors` and are **not** part of the active
 Qwen pipeline. They are kept here only for provenance.

@@ -1,7 +1,7 @@
 # Sycophancy steering — Qwen 3 32B replication
 
 Full multi-seed replication of the Gemma-2-27b-it sycophancy-steering
-pipeline (https://github.com/kelkarI/sycophancy-final) on **Qwen/Qwen3-32B**
+pipeline (https://github.com/kelkarI/sycophancy-gemma) on **Qwen/Qwen3-32B**
 at layer 32. Includes three standalone CAA-orthogonal residual conditions
 matching the Gemma addition.
 
